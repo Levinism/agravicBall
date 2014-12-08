@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF8">
+<style>
+input{margin-right:20px }
+a{margin-right: 10px}
+
+</style>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jscex.jscexRequire.min.js"></script>
+</head>
+<body>
+	<canvas id="playground"></canvas>
+	<div id="buttons">
+    <a>现在的速度是:<span id="speed">10(默认速度)</span></a><br/>
+    <input type="button"value="加速" id="add" onclick="add()"/>
+    <input type="button"value="减速" id="sub" onclick="sub()" />
+    <input type="button"value="关于" id="remove" onclick="about()" />
+    </div>
+</body>
+<script>
+    var cyc=10;
+    var v=1000;
+    var count=10;
+    var c=document.getElementById("playground");
+    var cxt=c.getContext("2d");
+    c.height=500;
+    c.width=500;
+    var decide=true;
+    var balls=[];
+
+    function about(){
+    alert("无重力匀速运动 by Levinism 2014年12月8日17:28:02")
+    }
+    function begin(){
+    decide=true;
+    moveAsync_agravic().start();
+    }
+
+    function add(){
+        decide=false;
+        count++;
+        v=v/1.5;
+        if(count<0){
+            document.getElementById("speed").innerHTML="速度将无限趋于0";
+        }
+        else
+            {document.getElementById("speed").innerHTML=count;}
+        decide=true;
+    }
+    function sub(){
+        decide=false;
+        count--;  
+        if(count<0){
+            v=v;
+            document.getElementById("speed").innerHTML="速度将无限趋于0";
+        }
+        else
+            {
+            v=v*1.5
+            document.getElementById("speed").innerHTML=count;}
+        decide=true;
+        
+    }
+
+    var Horizontal_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vx: 110,
+            vy:0,
+            color:"#ffffff"
+        };
+    var vertical_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: 110,
+            vx:0,
+            color:"#ffffff"
+        };
+    var opposite_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: 110,
+            vx:110,
+            color:"#ffffff"
+        };
+    var opposite_ball2 = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: 110,
+            vx: -110,
+            color:"#ffffff"
+        };
+    var O_Horizontal_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vx: -110,
+            vy:0,
+            color:"#ffffff"
+        };
+    var O_vertical_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: -110,
+            vx:0,
+            color:"#ffffff"
+        };
+    var O_opposite_ball = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: -110,
+            vx: -110,
+            color:"#ffffff"
+        };
+    var O_opposite_ball2 = {
+            position: { x: 250, y: 250 },
+            r: 12,
+            vy: -110,
+            vx: 110,
+            color:"#ffffff"
+        };
+    balls.push(Horizontal_ball);
+    balls.push(vertical_ball);
+    balls.push(opposite_ball);
+    balls.push(opposite_ball2);
+    balls.push(O_Horizontal_ball);
+    balls.push(O_vertical_ball);
+    balls.push(O_opposite_ball);
+    balls.push(O_opposite_ball2);
+    var moveAsync_agravic=eval(Jscex.compile("async",function(){
+        while(decide){
+                cxt.fillStyle="rgba(0,0,0,.8)"
+                cxt.fillRect(0,0,c.width,c.height);
+                for(i in balls){
+                cxt.fillStyle=balls[i].color;
+                cxt.beginPath();
+                cxt.arc(balls[i].position.x, balls[i].position.y, balls[i].r, 0, Math.PI * 2, true);
+                cxt.closePath();
+                cxt.fill();
+                if (balls[i].r + balls[i].position.x > c.width || balls[i].position.x <balls[i].r) balls[i].vx *= -1;
+                if (balls[i].r + balls[i].position.y > c.height || balls[i].position.y <balls[i].r) balls[i].vy *= -1;
+
+                balls[i].position.x += balls[i].vx * cyc / v;
+                balls[i].position.y += balls[i].vy * cyc / v;
+                }
+                $await(Jscex.Async.sleep(cyc));
+
+
+        }
+    }))
+    window.onload=function(){moveAsync_agravic().start()}
+
+</script>
+</html>
